@@ -1,0 +1,57 @@
+# Author: Vassey Konneh
+# Date: 04/06/2026
+# Description: This is the program file for the ASPOS project
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import os
+from Student import Student
+
+
+def main():
+    # File name of the CSV
+    file_name = 'student_learning_trajectory.csv'
+
+    # Load the Data
+
+    try:
+        df = pd.read_csv(file_name)
+    except Exception as perr:
+        print(f"Failed to read CSV file: {perr}")
+
+    # 2. Map Rows to Student Objects
+    student_objects = []
+    for column, row in df.iterrows():
+        s = Student()
+        s.setID(row['student_id'])
+        s.setWeek(row['week'])
+        s.setStudyHours(row['study_hours'])
+        s.setSleepHours(row['sleep_hours'])
+        s.setStressLevel(row['stress_level'])
+        s.setAttendance(row['attendance_rate'])
+        s.setScreenTime(row['screen_time_hours'])
+        s.setCaffeineIntake(row['caffeine_intake'])
+        s.setLearningEfficiency(row['learning_efficiency'])
+        s.setFatigueIndex(row['fatigue_index'])
+        s.setQuizScore(row['quiz_score'])
+        s.setAssignmentScore(row['assignment_score'])
+        s.setPerformanceIndex(row['performance_index'])
+        student_objects.append(s)
+
+    # Data Analytics using Pandas
+    # Calculating average metrics across all students/weeks
+    avg_performance = df['performance_index'].mean()
+    avg_study = df['study_hours'].mean()
+
+    print("Summary")
+    print(f"Average Performance Index: {avg_performance:.2f}")
+    print(f"Average Study Hours: {avg_study:.2f}")
+
+    # Weekly Trends
+    weekly_trends = df.groupby('week')[['performance_index', 'quiz_score']].mean()
+    print("Weekly Average Trends")
+    print(weekly_trends)
+
+
+if __name__ == "__main__":
+    main()
