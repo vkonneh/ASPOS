@@ -1,0 +1,71 @@
+# Author: Vassey Konneh
+# Date: 04/06/2026
+# Description: Student Class definition
+
+class Student:
+    def __init__(self):
+        self.ID = 0
+        self.week = 0
+        self.study_hours = 0
+        self.sleep_hours = 0
+        self.stress_level = 0
+        self.attendance = 0
+        self.screen_time = 0
+        self.caffeine_intake = 0
+        self.learning_efficiency = 0
+        self.fatigue_index = 0
+        self.quiz_score = 0
+        self.assignment_score = 0
+        self.performance_index = 0
+    def getID(self):
+        return self.ID
+    def getWeek(self):
+        return self.week
+    def getStudyHours(self):
+        return self.study_hours
+    def getSleepHours(self):
+        return self.sleep_hours
+    def getStressLevel(self):
+        return self.stress_level
+    def getAttendance(self):
+        return self.attendance
+    def getScreenTime(self):
+        return self.screen_time
+    def getCaffeineIntake(self):
+        return self.caffeine_intake
+    def getLearningEfficiency(self):
+        return self.learning_efficiency
+    def getFatigueIndex(self):
+        return self.fatigue_index
+    def getQuizScore(self):
+        return self.quiz_score
+    def getAssignmentScore(self):
+        return self.assignment_score
+    def getPerformanceIndex(self):
+        return self.performance_index
+    def setID(self, ID):
+        self.ID = ID
+    def setWeek(self, week):
+        self.week = week
+    def setStudyHours(self, study_hours):
+        self.study_hours = study_hours
+    def setSleepHours(self, sleep_hours):
+        self.sleep_hours = sleep_hours
+    def setStressLevel(self, stress_level):
+        self.stress_level = stress_level
+    def setAttendance(self, attendance):
+        self.attendance = attendance
+    def setScreenTime(self, screen_time):
+        self.screen_time = screen_time
+    def setCaffeineIntake(self, caffeine_intake):
+        self.caffeine_intake = caffeine_intake
+    def setLearningEfficiency(self, learning_efficiency):
+        self.learning_efficiency = learning_efficiency
+    def setFatigueIndex(self, fatigue_index):
+        self.fatigue_index = fatigue_index
+    def setQuizScore(self, quiz_score):
+        self.quiz_score = quiz_score
+    def setAssignmentScore(self, assignment_score):
+        self.assignment_score = assignment_score
+    def setPerformanceIndex(self, performance_index):
+        self.performance_index = performance_index
