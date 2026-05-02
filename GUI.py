@@ -4,9 +4,12 @@
 
 import tkinter as tk
 from tkinter import messagebox, scrolledtext
+import json
+import os
 
 import matplotlib.pyplot as plt
 from Analytics import Analytics
+from LoginSystem import LoginSystem  # Import the login/save module
 
 
 class ASPOSGUI:
@@ -24,11 +27,13 @@ class ASPOSGUI:
         self.title_color = "#1f2937"
         self.text_color = "#374151"
 
+        # Initialize the Login System
+        self.login_system = LoginSystem()
+
         try:
             self.analytics = Analytics(file_name)
         except Exception as error:
             messagebox.showerror("Load Error", str(error))
-
 
         title_label = tk.Label(
             self.root,
@@ -126,12 +131,12 @@ class ASPOSGUI:
 
         self.styleButton(button_frame, "Clear Output", self.clearOutput).grid(row=3, column=0, padx=10, pady=6)
         self.styleButton(button_frame, "Exit Program", self.root.destroy).grid(row=3, column=1, padx=10, pady=6)
-        self.styleButton(button_frame, "Risk Summary", self.showRiskSummary, primary=True).grid(row=3, column=2,
-        padx=10, pady=6)
+        self.styleButton(button_frame, "Risk Summary", self.showRiskSummary, primary=True).grid(row=3, column=2, padx=10, pady=6)
 
-        self.styleButton(button_frame, "Risk Factor Comparison", self.showTopRiskFactors, primary=True).grid(row=4,
-        column=1, padx=10, pady=(8, 6))
-
+        # Added buttons on row 4
+        self.styleButton(button_frame, "Save Student Data", self.saveStudentData, primary=True).grid(row=4, column=0, padx=10, pady=(8, 6))
+        self.styleButton(button_frame, "Risk Factor Comparison", self.showTopRiskFactors, primary=True).grid(row=4, column=1, padx=10, pady=(8, 6))
+        self.styleButton(button_frame, "View Saved Data", self.viewSavedData, primary=True).grid(row=4, column=2, padx=10, pady=(8, 6))
 
         chart_label = tk.Label(
             main_panel,
@@ -253,6 +258,54 @@ class ASPOSGUI:
     def showSummaryStatistics(self):
         """Display descriptive statistics for key variables."""
         self.displayDataFrame(self.analytics.getSummaryStatistics(), include_index=True)
+
+    def saveStudentData(self):
+        """Save the student record currently entered in the form using the matching week and ID."""
+        try:
+            student_id = int(self.student_id_entry.get().strip())
+            week_value = int(self.week_entry.get().strip())
+
+            # Find student records matching the ID and the entered week
+            student_records = [
+                s for s in self.analytics.student_objects
+                if s.getID() == student_id and s.getWeek() == week_value
+            ]
+
+            if not student_records:
+                messagebox.showerror(
+                    "Error",
+                    f"No data found for Student ID {student_id} and Week {week_value} in the dataset."
+                )
+                return
+
+            # Save the matching record
+            student_to_save = student_records[0]
+            success, message = self.login_system.saveStudentData(student_id, student_to_save.toDict())
+
+            if success:
+                messagebox.showinfo("Success", message)
+            else:
+                messagebox.showerror("Save Error", message)
+
+        except ValueError:
+            messagebox.showerror("Input Error", "Please enter valid numeric Student ID and Week values.")
+
+    def viewSavedData(self):
+        """Display the contents of the student_data.mec file."""
+        self.clearOutput()
+        filename = "student_data.mec"
+
+        if not os.path.exists(filename):
+            self.output_area.insert(tk.END, "No saved data file found.\n")
+            return
+
+        try:
+            with open(filename, "r") as file:
+                data = json.load(file)
+                self.output_area.insert(tk.END, json.dumps(data, indent=4))
+                self.output_area.insert(tk.END, "\n")
+        except Exception as e:
+            self.output_area.insert(tk.END, f"Error reading the saved file: {str(e)}\n")
 
     def showRiskSummary(self):
         """Display record-level and student-level risk summary."""
@@ -385,7 +438,6 @@ class ASPOSGUI:
                     return
 
             plt.figure(figsize=(8, 5))
-            # plot relationship between study hours and performance
             plt.scatter(df["study_hours"], df["performance_index"])
             plt.title("Study Hours vs Performance")
             plt.xlabel("Study Hours")
@@ -414,7 +466,6 @@ class ASPOSGUI:
                     return
 
             plt.figure(figsize=(8, 5))
-            # plot relationship between attendance and performance
             plt.scatter(df["attendance_rate"], df["performance_index"])
             plt.title("Attendance Rate vs Performance")
             plt.xlabel("Attendance Rate")
@@ -432,11 +483,9 @@ class ASPOSGUI:
 
         try:
             df = self.analytics.getDataset()
-
             grouped = df.groupby("week")["performance_index"].mean()
 
             plt.figure(figsize=(8, 5))
-            # plot average performance over time
             grouped.plot(marker='o', linewidth=2)
             plt.title("Average Performance by Week")
             plt.xlabel("Week")
@@ -445,7 +494,5 @@ class ASPOSGUI:
             plt.tight_layout()
             plt.show()
 
-
         except Exception as error:
             messagebox.showerror("Chart Error", str(error))
-
