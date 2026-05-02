@@ -40,6 +40,7 @@ Main GUI Interactions:
 - Summary Statistics
 - Clear Output
 - Exit Program
+- Save Student Data
 
 How the Requirements Are Met:
 - The program is written in Python.
