@@ -1,11 +1,14 @@
 # Author: Vassey Konneh and Leocalis Quezada
 # Date: 04/10/2026
-# Description: Pytest tests for ASPOS.
+# Description: Pytest tests for ASPOS, including LoginSystem and Student changes.
 
+import os
+import json
 import pandas as pd
 import pytest
 from Student import Student
 from Analytics import Analytics
+from LoginSystem import LoginSystem
 
 
 @pytest.fixture
@@ -67,8 +70,40 @@ def testFilterByStudentID(sample_csv):
     assert len(filtered) == 2
 
 
-def testAtRiskStudents(sample_csv):
+def testAtRiskStudentsFunction(sample_csv):
     """Check at-risk student filtering."""
     analytics = Analytics(sample_csv)
     filtered = analytics.getAtRiskStudents()
     assert len(filtered) == 1
+
+
+def testStudentToDict():
+    """Check that the Student toDict method returns a valid dictionary."""
+    student = Student()
+    student.setID(1)
+    student.setWeek(2)
+    student.setStudyHours(8.5)
+
+    student_dict = student.toDict()
+    assert student_dict["ID"] == 1
+    assert student_dict["week"] == 2
+    assert student_dict["study_hours"] == 8.5
+
+
+def testSaveStudentData(tmp_path):
+    """Check that student data is saved properly using LoginSystem."""
+    test_file = tmp_path / "test_student_data.mec"
+    login_sys = LoginSystem()
+
+    sample_data = {"ID": 1, "week": 1, "study_hours": 8.0}
+    success, message = login_sys.saveStudentData(1, sample_data, filename=str(test_file))
+
+    assert success is True
+    assert os.path.exists(test_file)
+
+    # Check that data was properly saved to the dictionary/JSON file
+    with open(test_file, "r") as f:
+        saved_data = json.load(f)
+        assert "1" in saved_data
+        assert len(saved_data["1"]) == 1
+        assert saved_data["1"][0]["study_hours"] == 8.0
