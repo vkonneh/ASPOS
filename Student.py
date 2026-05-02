@@ -130,6 +130,24 @@ class Student:
         attendance_cutoff = 0.75 if self.attendance <= 1 else 75
         return self.performance_index < 70 or self.attendance < attendance_cutoff
 
+    def toDict(self):
+        """Convert the student object attributes to a dictionary for file storage."""
+        return {
+            "ID": self.ID,
+            "week": self.week,
+            "study_hours": self.study_hours,
+            "sleep_hours": self.sleep_hours,
+            "stress_level": self.stress_level,
+            "attendance": self.attendance,
+            "screen_time": self.screen_time,
+            "caffeine_intake": self.caffeine_intake,
+            "learning_efficiency": self.learning_efficiency,
+            "fatigue_index": self.fatigue_index,
+            "quiz_score": self.quiz_score,
+            "assignment_score": self.assignment_score,
+            "performance_index": self.performance_index
+        }
+
     def __str__(self):
         """Return a readable string for the student record."""
         return (
