@@ -1,0 +1,43 @@
+# Author: Vassey Konneh and Leocalis Quezada
+# Date: 04/10/2026
+# Description: Student login System for ASPOS.
+
+import os
+import json
+
+
+class LoginSystem:
+
+    def __init__(self):
+        """Initialize the login system."""
+        pass
+
+    def login(self, student_id):
+        """Log in a student with their student ID without verification."""
+        return True, f"Logged in with Student ID: {student_id}."
+
+    def saveStudentData(self, student_id, student_data, filename="student_data.mec"):
+        """Save student metrics to a file by appending to a list of student records."""
+        try:
+            data_to_save = {}
+            if os.path.exists(filename):
+                with open(filename, "r") as file:
+                    try:
+                        data_to_save = json.load(file)
+                    except json.JSONDecodeError:
+                        data_to_save = {}
+
+            # Initialize a list for the student if it doesn't exist
+            student_id_str = str(student_id)
+            if student_id_str not in data_to_save:
+                data_to_save[student_id_str] = []
+
+            # Append the new record to the student's list of records
+            data_to_save[student_id_str].append(student_data)
+
+            with open(filename, "w") as file:
+                json.dump(data_to_save, file, indent=4)
+
+            return True, f"Data successfully saved to {filename}."
+        except Exception as e:
+            return False, f"Failed to save data: {str(e)}"
